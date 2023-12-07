@@ -12,6 +12,7 @@ int coeff_numb = 3;
 
 double WO = 60.0 / (300.0 / 2);
 double BW = WO / 35;
+double AB = 20;
 
 double q = 35;
 double f0 = 60;
@@ -20,6 +21,7 @@ double BW_Comb = (f0 / (fs / 2)) / q;
 
 NOP_FI::Notch_Peak_F NPF;
 
+//Notch filter with the default dB level
 std::vector<std::vector<double>> coeff_final = NPF.iirnotch_cpp(WO, BW);
 
 for (int kk = 0; kk < 2; kk++)
@@ -44,6 +46,38 @@ for (int kk = 0; kk < 2; kk++)
     {
 
         std::cout << coeff_final[kk][ll] << "\t" << std::ends;
+
+    }
+
+    std::cout << std::endl;
+
+}
+
+//Notch filter with the selected dB level
+std::vector<std::vector<double>> coeff_final_dB = NPF.iirnotch_cpp(WO, BW, AB);
+
+for (int kk = 0; kk < 2; kk++)
+{
+
+    if (kk == 0)
+    {
+
+        std::cout << "Numerator notch (dB): " << std::ends;
+
+    }
+
+    else
+    {
+
+        std::cout << "Denumerator notch(dB): " << std::ends;
+
+    }
+
+    for (int ll = 0; ll < coeff_numb; ll++)
+
+    {
+
+        std::cout << coeff_final_dB[kk][ll] << "\t" << std::ends;
 
     }
 
@@ -89,6 +123,43 @@ if (coeff_final_comb.size() > 0)
 
 }
 
+//Comb filter (overload)
+std::vector<std::vector<double>> coeff_final_comb_dB = NPF.iircomb_cpp(fs / f0, BW_Comb, AB, "notch");
+std::cout << "\n";
+
+if (coeff_final_comb.size() > 0)
+{
+
+    for (int kk = 0; kk < 2; kk++)
+    {
+
+        if (kk == 0)
+        {
+
+            std::cout << "Numerator Comb (dB): " << std::ends;
+
+        }
+
+        else
+        {
+
+            std::cout << "Denumerator Comb (dB): " << std::ends;
+
+        }
+
+        for (int ll = 0; ll < (fs / f0) + 1; ll++)
+
+        {
+
+            std::cout << coeff_final_comb_dB[kk][ll] << "\t" << std::ends;
+
+        }
+
+        std::cout << std::endl;
+
+    }
+
+}
 
 //Peak filter
 std::vector<std::vector<double>> coeff_final_peak = NPF.iircomb_cpp(fs / f0, BW_Comb, "peak");
@@ -127,6 +198,43 @@ if (coeff_final_peak.size() > 0)
     }
 }
 
+//Peak filter (Overload)
+std::vector<std::vector<double>> coeff_final_peak_dB = NPF.iircomb_cpp(fs / f0, BW_Comb, AB, "peak");
+std::cout << "\n";
+
+if (coeff_final_peak.size() > 0)
+{
+
+    for (int kk = 0; kk < 2; kk++)
+    {
+
+        if (kk == 0)
+        {
+
+            std::cout << "Numerator Peak (dB): " << std::ends;
+
+        }
+
+        else
+        {
+
+            std::cout << "Denumerator Comb (dB): " << std::ends;
+
+        }
+
+        for (int ll = 0; ll < (fs / f0) + 1; ll++)
+
+        {
+
+            std::cout << coeff_final_peak_dB[kk][ll] << "\t" << std::ends;
+
+        }
+
+        std::cout << std::endl;
+
+    }
+}
+
 std::vector<std::vector<double>> coeff_final_peak1 = NPF.iircomb_cpp(fs / f0, BW_Comb, "peak1");
 
 //Create a complex sine wave
@@ -152,7 +260,7 @@ if (coeff_final_comb.size() > 0)
 
     //std::vector<double> filt_sign = NPF.Filter_Data_NCP(coeff_final_comb, test_sin);
     //std::vector<double> filt_sign = NPF.Filter_Data_NCP(coeff_final_peak, test_sin);
-    std::vector<double> filt_sign = NPF.Filter_Data_NCP(coeff_final, test_sin);
+    std::vector<double> filt_sign = NPF.Filter_Data_NCP(coeff_final_peak_dB, test_sin);
 
     //Write the output of the filter to a file
     std::ofstream myfile_I;
