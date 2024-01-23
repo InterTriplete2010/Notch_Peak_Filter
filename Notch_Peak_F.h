@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <vector>
 
-#ifndef Notch_Peak_FH
-#define Notch_Peak_FH
+#ifndef Notch_Peak_F_H
+#define Notch_Peak_F_H
 
 #ifdef __cplusplus
 extern "C" {  // only need to export C interface if
